@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang='es'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <title>Programa de Dactilografía</title>
+  <style>
+    :root {
+      --bg: #08111d;
+      --bg-2: #101d2e;
+      --panel: #101b2d;
+      --panel-2: #122238;
+      --line: rgba(148, 163, 184, 0.18);
+      --text: #ebf3ff;
+      --muted: #9bb0cc;
+      --primary: #60a5fa;
+      --primary-2: #3b82f6;
+      --accent: #a78bfa;
+      --good: #34d399;
+      --warn: #fbbf24;
+      --bad: #f87171;
+      --shadow: rgba(2, 6, 23, 0.64);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(168,85,247,0.18), transparent 30%),
+        linear-gradient(160deg, var(--bg), var(--bg-2));
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text);
+      padding: 32px 18px;
+    }
+
+    .app {
+      width: min(1100px, 100%);
+      background: rgba(16, 27, 45, 0.88);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: 0 20px 80px var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+
+    .topbar {
+      padding: 22px 28px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-badge {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(96,165,250,0.2), rgba(167,139,250,0.18));
+      border: 1px solid rgba(96,165,250,0.34);
+      font-weight: 800;
+      color: #dbeafe;
+      letter-spacing: 0.05em;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(1.5rem, 2vw, 2.1rem);
+      line-height: 1.1;
+    }
+
+    .brand small {
+      display: block;
+      color: var(--muted);
+      margin-top: 3px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.68rem;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+
+    label {
+      color: var(--muted);
+      font-size: 0.74rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-right: 8px;
+    }
+
+    select, button, input {
+      font: inherit;
+    }
+
+    select {
+      background: rgba(15, 23, 42, 0.7);
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 9px 12px;
+      min-width: 150px;
+    }
+
+    button {
+      border: 1px solid rgba(96,165,250,0.3);
+      color: var(--text);
+      background: linear-gradient(180deg, rgba(59,130,246,0.15), rgba(59,130,246,0.08));
+      padding: 9px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease, filter 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(96,165,250,0.5);
+      filter: brightness(1.08);
+    }
+
+    button.secondary {
+      background: rgba(255,255,255,0.03);
+      border-color: var(--line);
+    }
+
+    button.warn {
+      background: linear-gradient(180deg, rgba(239,68,68,0.16), rgba(239,68,68,0.08));
+      border-color: rgba(248,113,113,0.42);
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(240px, 0.8fr);
+      gap: 18px;
+      padding: 22px 28px 28px;
+    }
+
+    .panel {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(110px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 10px;
+      text-align: center;
+    }
+
+    .stat .value {
+      display: block;
+      font-size: clamp(1.5rem, 2.3vw, 2.1rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin-bottom: 6px;
+    }
+
+    .stat .name {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.68rem;
+    }
+
+    .progress {
+      width: 100%;
+      height: 8px;
+      background: rgba(15,23,42,0.8);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(148,163,184,0.15);
+      margin: 12px 0 16px;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--good));
+      border-radius: inherit;
+      transition: width 0.12s linear;
+    }
+
+    .text-box {
+      min-height: 230px;
+      background: rgba(7, 12, 20, 0.55);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px 16px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: clamp(1.1rem, 1.8vw, 1.7rem);
+      line-height: 1.8;
+      letter-spacing: 0.04em;
+      white-space: pre-wrap;
+      word-break: break-word;
+      user-select: none;
+    }
+
+    .text-box .correct { color: var(--good); }
+    .text-box .wrong { color: var(--bad); background: rgba(248, 113, 113, 0.2); }
+    .text-box .current { background: rgba(96,165,250,0.2); border-bottom: 2px solid var(--primary); }
+    .text-box .pending { color: rgba(235,243,255,0.6); }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .right-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .mini-title {
+      margin: 0 0 12px;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .lessons {
+      display: grid;
+      gap: 10px;
+    }
+
+    .lesson {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.02);
+      cursor: pointer;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+
+    .lesson:hover {
+      border-color: rgba(96,165,250,0.5);
+      transform: translateY(-1px);
+    }
+
+    .lesson.active {
+      border-color: rgba(96,165,250,0.75);
+      background: rgba(59,130,246,0.08);
+    }
+
+    .lesson strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.96rem;
+    }
+
+    .lesson span {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .keyboard {
+      display: grid;
+      gap: 8px;
+    }
+
+    .row {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .key {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #dfeaff;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(148,163,184,0.2);
+      text-transform: uppercase;
+      transition: transform 0.08s ease, background 0.08s ease, border-color 0.08s ease;
+    }
+
+    .key.wide { width: 56px; }
+    .key.space { width: 180px; }
+    .key.active {
+      transform: translateY(1px);
+      background: linear-gradient(180deg, var(--primary), var(--primary-2));
+      border-color: rgba(255,255,255,0.2);
+      box-shadow: 0 0 18px rgba(96,165,250,0.45);
+    }
+
+    .key.shift {
+      background: rgba(251, 191, 36, 0.12);
+      border-color: rgba(251,191,36,0.42);
+    }
+
+    @media (max-width: 840px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, minmax(110px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class='app'>
+    <header class='topbar'>
+      <div class='brand'>
+        <div class='brand-badge'>TD</div>
+        <div>
+          <h1>Programa de Dactilografía</h1>
+          <small>Práctica · Lecciones · Exámenes</small>
+        </div>
+      </div>
+
+      <div class='controls'>
+        <div class='card'>
+          <label for='textSelect'>Texto</label>
+          <select id='textSelect'></select>
+        </div>
+        <button id='startBtn'>Comenzar</button>
+        <button id='resetBtn' class='secondary'>Reiniciar</button>
+      </div>
+    </header>
+
+    <div class='content'>
+      <main class='panel'>
+        <div class='stats'>
+          <div class='stat'>
+            <span id='timeValue' class='value'>60</span>
+            <span class='name'>Tiempo</span>
+          </div>
+          <div class='stat'>
+            <span id='wpmValue' class='value'>0</span>
+            <span class='name'>WPM</span>
+          </div>
+          <div class='stat'>
+            <span id='accValue' class='value'>100%</span>
+            <span class='name'>Precisión</span>
+          </div>
+          <div class='stat'>
+            <span id='errValue' class='value'>0</span>
+            <span class='name'>Errores</span>
+          </div>
+        </div>
+
+        <div class='progress'>
+          <div id='progressBar' class='progress-bar'></div>
+        </div>
+
+        <div id='textBox' class='text-box' aria-live='polite'></div>
+
+        <div class='actions'>
+          <button id='pauseBtn' class='secondary'>Pausar</button>
+          <button id='saveBtn' class='secondary'>Guardar texto</button>
+        </div>
+      </main>
+
+      <aside class='right-panel'>
+        <section class='panel'>
+          <h2 class='mini-title'>Lecciones</h2>
+          <div id='lessonList' class='lessons'></div>
+        </section>
+
+        <section class='panel'>
+          <h2 class='mini-title'>Teclado</h2>
+          <div id='keyboard' class='keyboard'></div>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const textSelect = document.getElementById('textSelect');
+    const textBox = document.getElementById('textBox');
+    const timeValue = document.getElementById('timeValue');
+    const wpmValue = document.getElementById('wpmValue');
+    const accValue = document.getElementById('accValue');
+    const errValue = document.getElementById('errValue');
+    const progressBar = document.getElementById('progressBar');
+    const lessonList = document.getElementById('lessonList');
+    const keyboardEl = document.getElementById('keyboard');
+
+    const keyboardLayout = [
+      ['q','w','e','r','t','y','u','i','o','p'],
+      ['a','s','d','f','g','h','j','k','l','ñ'],
+      ['z','x','c','v','b','n','m'],
+      [' ']
+    ];
+
+    const lessons = [
+      { name: 'Fase 1 · Índices', keys: 'f j', text: 'fijar la postura y pulsar con calma cada letra en la fila central.' },
+      { name: 'Fase 2 · Centro', keys: 'd k', text: 'donde las manos trabajan en armonía, la velocidad mejora con precisión.' },
+      { name: 'Fase 3 · Escritura legal', keys: 'a s', text: 'la certificación de la escritura profesional exige constancia y orden.' },
+      { name: 'Fase 4 · Prueba breve', keys: 'm ñ', text: 'mantener la atención en cada pulso ayuda a reducir errores y cansancio.' }
+    ];
+
+    const texts = [
+      'La práctica constante mejora la velocidad, la precisión y la confianza al escribir con claridad.',
+      'El estudio del derecho requiere atención, redacción exacta y una mente ordenada para analizar cada caso.',
+      'Los profesionales deben cuidar la postura, respirar con calma y mantener un ritmo estable durante toda la jornada.',
+      'La evidencia, la argumentación y la redacción impecable son pilares esenciales en la actividad jurídica.',
+      'La rutina diaria de mecanografía fortalece la memoria muscular y reduce la fatiga en cada ejercicio.'
+    ];
+
+    let currentText = '';
+    let timerDuration = 60;
+    let started = false;
+    let paused = false;
+    let timer = null;
+    let timeLeft = timerDuration;
+    let totalTyped = 0;
+    let correctChars = 0;
+    let errors = 0;
+    let currentIndex = 0;
+    let activeLessonIndex = 0;
+    let lastKey = null;
+
+    function populateTextSelect() {
+      textSelect.innerHTML = texts.map((text, index) => `<option value='${index}'>Texto ${index + 1}</option>`).join('');
+      textSelect.value = '0';
+      currentText = texts[0];
+      renderText();
+    }
+
+    function populateLessons() {
+      lessonList.innerHTML = lessons.map((lesson, index) => `
+        <div class='lesson ${index === activeLessonIndex ? 'active' : ''}' data-index='${index}'>
+          <strong>${lesson.name}</strong>
+          <span>${lesson.keys}</span>
+        </div>
+      `).join('');
+
+      lessonList.querySelectorAll('.lesson').forEach((item) => {
+        item.addEventListener('click', () => {
+          activeLessonIndex = Number(item.dataset.index);
+          currentText = lessons[activeLessonIndex].text;
+          textSelect.value = '0';
+          resetSession();
+          populateLessons();
+          renderText();
+        });
+      });
+    }
+
+    function renderText() {
+      const chars = Array.from(currentText);
+      let html = '';
+
+      chars.forEach((char, index) => {
+        let classes = 'pending';
+
+        if (index < currentIndex) {
+          classes = chars[index] === currentText[index] ? 'correct' : 'wrong';
+        } else if (index === currentIndex) {
+          classes = 'current';
+        }
+
+        html += `<span class='${classes}'>${escapeHtml(char)}</span>`;
+      });
+
+      textBox.innerHTML = html;
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function updateStats() {
+      const minutes = Math.max((timerDuration - timeLeft) / 60, 0);
+      const wpm = Math.max(0, Math.round((correctChars / 5) / Math.max(minutes, 1 / 60)));
+      const accuracy = totalTyped === 0 ? 100 : Math.max(0, Math.round((correctChars / totalTyped) * 100));
+
+      timeValue.textContent = String(Math.max(0, timeLeft));
+      wpmValue.textContent = String(wpm);
+      accValue.textContent = `${accuracy}%`;
+      errValue.textContent = String(errors);
+
+      const progress = ((timerDuration - timeLeft) / timerDuration) * 100;
+      progressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+    }
+
+    function renderKeyboard() {
+      keyboardEl.innerHTML = '';
+
+      keyboardLayout.forEach((row) => {
+        const rowEl = document.createElement('div');
+        rowEl.className = 'row';
+
+        row.forEach((key) => {
+          const keyEl = document.createElement('div');
+          keyEl.className = 'key';
+          if (key === ' ') {
+            keyEl.classList.add('space');
+            keyEl.textContent = '␣';
+          } else {
+            keyEl.textContent = key;
+          }
+
+          if (key === lastKey) {
+            keyEl.classList.add('active');
+          }
+
+          if (['shift', 'caps'].includes(key)) {
+            keyEl.classList.add('shift');
+          }
+
+          rowEl.appendChild(keyEl);
+        });
+
+        keyboardEl.appendChild(rowEl);
+      });
+    }
+
+    function resetSession() {
+      clearInterval(timer);
+      timer = null;
+      started = false;
+      paused = false;
+      timeLeft = timerDuration;
+      totalTyped = 0;
+      correctChars = 0;
+      errors = 0;
+      currentIndex = 0;
+      lastKey = null;
+      updateStats();
+      renderText();
+      renderKeyboard();
+    }
+
+    function setTextFromSelect() {
+      currentText = texts[Number(textSelect.value)];
+      resetSession();
+      renderText();
+    }
+
+    function startSession() {
+      if (started && !paused) return;
+
+      if (!started) {
+        started = true;
+      }
+
+      paused = false;
+
+      clearInterval(timer);
+      timer = setInterval(() => {
+        timeLeft -= 1;
+        if (timeLeft <= 0) {
+          timeLeft = 0;
+          clearInterval(timer);
+          started = false;
+          paused = false;
+          document.getElementById('pauseBtn').textContent = 'Pausar';
+        }
+        updateStats();
+      }, 1000);
+
+      document.getElementById('pauseBtn').textContent = 'Pausar';
+    }
+
+    function pauseSession() {
+      if (!started) return;
+      paused = !paused;
+
+      if (paused) {
+        clearInterval(timer);
+        document.getElementById('pauseBtn').textContent = 'Reanudar';
+      } else {
+        startSession();
+      }
+    }
+
+    function handleTyping(event) {
+      if (!started && !paused) {
+        startSession();
+      }
+
+      if (paused) return;
+
+      const key = event.key;
+
+      if (key === 'Escape') {
+        resetSession();
+        return;
+      }
+
+      if (key.length !== 1 && key !== ' ') {
+        return;
+      }
+
+      const expected = currentText[currentIndex] ?? null;
+      lastKey = key.toLowerCase();
+      renderKeyboard();
+
+      if (key === 'Backspace') {
+        if (currentIndex > 0) {
+          currentIndex -= 1;
+          renderText();
+        }
+        return;
+      }
+
+      if (key === 'Tab' || key === 'Meta' || key === 'Alt' || key === 'Control' || key === 'Shift') {
+        return;
+      }
+
+      totalTyped += 1;
+
+      if (expected === null) {
+        errors += 1;
+        updateStats();
+        return;
+      }
+
+      if (key === expected || key === expected.toLowerCase()) {
+        correctChars += 1;
+        currentIndex += 1;
+      } else {
+        errors += 1;
+      }
+
+      if (currentIndex >= currentText.length) {
+        clearInterval(timer);
+        started = false;
+        paused = false;
+      }
+
+      renderText();
+      updateStats();
+    }
+
+    textSelect.addEventListener('change', setTextFromSelect);
+    document.getElementById('startBtn').addEventListener('click', startSession);
+    document.getElementById('resetBtn').addEventListener('click', resetSession);
+    document.getElementById('pauseBtn').addEventListener('click', pauseSession);
+    document.getElementById('saveBtn').addEventListener('click', () => {
+      const key = `typing-text-${Date.now()}`;
+      localStorage.setItem(key, currentText);
+      alert('Texto guardado en el navegador.');
+    });
+
+    window.addEventListener('keydown', handleTyping);
+
+    populateTextSelect();
+    populateLessons();
+    renderKeyboard();
+    updateStats();
+  </script>
+</body>
+</html>
